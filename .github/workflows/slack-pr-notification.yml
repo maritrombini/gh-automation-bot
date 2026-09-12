@@ -1,3 +1,4 @@
+
 name: Notify Slack about new PR
 
 on:
@@ -18,6 +19,8 @@ jobs:
       - name: Send notification to Slack
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          MARI_SLACK_ID: ${{ secrets.MARI_SLACK_ID }}
+
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -25,6 +28,7 @@ jobs:
           SOURCE_BRANCH: ${{ github.event.pull_request.head.ref }}
           TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
           REPOSITORY: ${{ github.repository }}
+
         run: |
           payload=$(jq -n \
             --arg title "$PR_TITLE" \
@@ -34,51 +38,66 @@ jobs:
             --arg source "$SOURCE_BRANCH" \
             --arg target "$TARGET_BRANCH" \
             --arg repository "$REPOSITORY" \
+            --arg mari_id "$MARI_SLACK_ID" \
             '{
               "text": ("🚀 Novo Pull Request no " + $repository),
+
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "🚀 Novo Pull Request para review!"
+                    "text": "🚀 Novo Pull Request para review!",
+                    "emoji": true
                   }
                 },
+
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ("🤖 *gh-automation-bot* detectou um novo PR no repositório `" + $repository + "`.")
+                    "text": "🤖 *gh-automation-bot* detectou um novo PR no repositório\n`" + $repository + "`"
                   }
                 },
+
+                {
+                  "type": "divider"
+                },
+
                 {
                   "type": "section",
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": ("👩‍💻 *Autora:*\n" + $author)
+                      "text": "👩‍💻 *Autora:*\n`" + $author + "`"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": ("🔢 *PR:*\n#" + $number)
+                      "text": "🔢 *Pull Request:*\n<" + $url + "|#" + $number + ">"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": ("🌿 *Origem:*\n`" + $source + "`")
+                      "text": "🌿 *Origem:*\n`" + $source + "`"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": ("🎯 *Destino:*\n`" + $target + "`")
+                      "text": "🎯 *Destino:*\n`" + $target + "`"
                     }
                   ]
                 },
+
+                {
+                  "type": "divider"
+                },
+
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ("📝 *" + $title + "*")
+                    "text": "📝 *Título do PR*\n" + $title
                   }
                 },
+
                 {
                   "type": "actions",
                   "elements": [
@@ -86,26 +105,28 @@ jobs:
                       "type": "button",
                       "text": {
                         "type": "plain_text",
-                        "text": "🔎 Abrir Pull Request"
+                        "text": "🔎 Abrir Pull Request",
+                        "emoji": true
                       },
                       "url": $url,
                       "style": "primary"
                     }
                   ]
                 },
+
                 {
                   "type": "context",
                   "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "👩‍💻 Responsável pelo acompanhamento: ${{ secrets.MARI_SLACK_ID }}"
+                      "text": "👩‍💻 Responsável pelo acompanhamento: <@" + $mari_id + ">"
                     }
                   ]
                 }
               ]
             }')
 
-          curl -X POST \
+          curl --fail-with-body -X POST \
             -H "Content-Type: application/json" \
             --data "$payload" \
             "$SLACK_WEBHOOK_URL"
