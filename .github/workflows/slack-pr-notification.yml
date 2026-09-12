@@ -59,7 +59,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🤖 *gh-automation-bot* detectou um novo PR no repositório\n`" + $repository + "`"
+                    "text": ("🤖 *gh-automation-bot* detectou um novo PR no repositório\n`" + $repository + "`")
                   }
                 },
 
@@ -72,19 +72,19 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "👩‍💻 *Autora:*\n`" + $author + "`"
+                      "text": ("👩‍💻 *Autora:*\n`" + $author + "`")
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "🔢 *Pull Request:*\n<" + $url + "|#" + $number + ">"
+                      "text": ("🔢 *Pull Request:*\n<" + $url + "|#" + $number + ">")
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "🌿 *Origem:*\n`" + $source + "`"
+                      "text": ("🌿 *Origem:*\n`" + $source + "`")
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "🎯 *Destino:*\n`" + $target + "`"
+                      "text": ("🎯 *Destino:*\n`" + $target + "`")
                     }
                   ]
                 },
@@ -97,7 +97,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "📝 *Título do PR*\n" + $title
+                    "text": ("📝 *Título do PR*\n" + $title)
                   }
                 },
 
@@ -122,7 +122,7 @@ jobs:
                   "elements": [
                     {
                       "type": "mrkdwn",
-                      "text": "👩‍💻 Responsável pelo acompanhamento: <@" + $mari_id + ">"
+                      "text": ("👩‍💻 Responsável pelo acompanhamento: <@" + $mari_id + ">")
                     }
                   ]
                 }
