@@ -47,7 +47,7 @@ jobs:
                       "👋 Alô <@" + $mari_id + "> — Brisa chegou com um PR do *" +
                       $repository +
                       "* enviado por <@" + $author_id + ">.\n\n" +
-                      "<" + $url + "|:github: " + $title + ">"
+                      "<" + $url + "|:github-octo: " + $title + ">"
                     )
                   }
                 }
