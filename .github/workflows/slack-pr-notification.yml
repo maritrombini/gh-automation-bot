@@ -3,7 +3,10 @@ name: Notify Slack about new PR
 
 on:
   pull_request:
-    types: [opened]
+    types:
+      - opened
+      - synchronize
+      - reopened
     branches:
       - main
 
