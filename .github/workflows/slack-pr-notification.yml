@@ -1,4 +1,3 @@
-
 name: Notify Slack about new PR
 
 on:
@@ -26,105 +25,31 @@ jobs:
 
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-          SOURCE_BRANCH: ${{ github.event.pull_request.head.ref }}
-          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
-          REPOSITORY: ${{ github.repository }}
+          PR_AUTHOR_ID: ${{ secrets.MARI_SLACK_ID }}
+          REPOSITORY: ${{ github.event.repository.name }}
 
         run: |
           payload=$(jq -n \
+            --arg mari_id "$MARI_SLACK_ID" \
+            --arg repository "$REPOSITORY" \
+            --arg author_id "$PR_AUTHOR_ID" \
             --arg title "$PR_TITLE" \
             --arg url "$PR_URL" \
-            --arg number "$PR_NUMBER" \
-            --arg author "$PR_AUTHOR" \
-            --arg source "$SOURCE_BRANCH" \
-            --arg target "$TARGET_BRANCH" \
-            --arg repository "$REPOSITORY" \
-            --arg mari_id "$MARI_SLACK_ID" \
             '{
-              "text": ("🚀 Novo Pull Request no " + $repository),
+              "text": ("Alô <@" + $mari_id + "> — Brisa chegou com um PR do " + $repository + " enviado por <@" + $author_id + ">"),
 
               "blocks": [
                 {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "🚀 Novo Pull Request para review!",
-                    "emoji": true
-                  }
-                },
-
-                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🤖 *gh-automation-bot* detectou um novo PR no repositório\n`" + $repository + "`"
+                    "text": (
+                      "👋 Alô <@" + $mari_id + "> — Brisa chegou com um PR do *" +
+                      $repository +
+                      "* enviado por <@" + $author_id + ">.\n\n" +
+                      "<" + $url + "|:github-octo: " + $title + ">"
+                    )
                   }
-                },
-
-                {
-                  "type": "divider"
-                },
-
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "👩‍💻 *Autora:*\n`" + $author + "`"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "🔢 *Pull Request:*\n<" + $url + "|#" + $number + ">"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "🌿 *Origem:*\n`" + $source + "`"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "🎯 *Destino:*\n`" + $target + "`"
-                    }
-                  ]
-                },
-
-                {
-                  "type": "divider"
-                },
-
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "📝 *Título do PR*\n" + $title
-                  }
-                },
-
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "🔎 Abrir Pull Request",
-                        "emoji": true
-                      },
-                      "url": $url,
-                      "style": "primary"
-                    }
-                  ]
-                },
-
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "👩‍💻 Responsável pelo acompanhamento: <@" + $mari_id + ">"
-                    }
-                  ]
                 }
               ]
             }')
